@@ -1,11 +1,12 @@
 # Cyclone's Hashes.com API Escrow Tool
 (coming soon)
 
-![image](https://media.discordapp.net/attachments/1071280627887919104/1142294017233662083/image.png?width=836&height=609)
+![image](https://i.imgur.com/gNpMGaq.png)
 
 Tool for interacting with hashes.com escrow's API. Currently supports all known API calls from hashes.com.
 ### Features:
 - Upload Founds
+  - ![image](https://i.imgur.com/GzRN3lE.png)
   - Select from file list
   - Paste custom file path
   - Paste hash:plaintext
