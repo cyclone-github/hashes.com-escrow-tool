@@ -1,5 +1,4 @@
 # Cyclone's Hashes.com API Escrow Tool
-(coming soon)
 
 ![image](https://i.imgur.com/gNpMGaq.png)
 
@@ -17,12 +16,12 @@ https://github.com/PlumLulz/hashes.com-cli
   - Paste custom file path
   - Paste hash:plaintext
 - Show Upload History
-- Search Hashes
+- Search Hashes (requires credits from hashes.com)
 - Hash Identifier
 - Wallet Balance
 - Show Profit
 - Withdraw History
 - Saves API key locally with AES encrypted key file
 
-###Compile from source code info:
+### Compile from source code info:
 - https://github.com/cyclone-github/scripts/blob/main/intro_to_go.txt
