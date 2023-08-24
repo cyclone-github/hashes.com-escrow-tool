@@ -15,18 +15,19 @@ func parseFloat(value string) float64 {
 	return f
 }
 
-// get hashes from user
-func getHashesFromUser() []string {
-	fmt.Println("This service is provided by hashes.com API")
-	//fmt.Println("Enter the hashes separated by commas or spaces:\n")
-	fmt.Println("Paste a single hash:\n")
-	var input string
-	fmt.Scanln(&input)
-
-	// Replace commas with spaces and then split by spaces
-	hashes := strings.Fields(strings.NewReplacer(",", "", " ", "").Replace(input))
-
-	return hashes
+// paste hashes
+func pasteHashes() string {
+	fmt.Println("Paste one hash per line (press Enter twice to finish):")
+	reader := bufio.NewReader(os.Stdin)
+	var hashPlaintexts []string
+	for {
+		line, err := reader.ReadString('\n')
+		if err != nil || strings.TrimSpace(line) == "" {
+			break
+		}
+		hashPlaintexts = append(hashPlaintexts, strings.TrimSpace(line))
+	}
+	return strings.Join(hashPlaintexts, "\n")
 }
 
 // select file
@@ -56,17 +57,7 @@ func selectFile() (string, string) {
 		}
 
 		if input == "p" {
-			fmt.Println("Paste hash:plaintext (press Enter twice to finish):")
-			reader := bufio.NewReader(os.Stdin)
-			var hashPlaintexts []string
-			for {
-				line, err := reader.ReadString('\n')
-				if err != nil || strings.TrimSpace(line) == "" {
-					break
-				}
-				hashPlaintexts = append(hashPlaintexts, strings.TrimSpace(line))
-			}
-			return "PASTE", strings.Join(hashPlaintexts, "\n")
+			return "PASTE", pasteHashes()
 		}
 
 		if input == "c" {

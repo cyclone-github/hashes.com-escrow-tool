@@ -9,9 +9,9 @@ import (
 	"text/tabwriter"
 )
 
-// case 7, withdrawal history
+// withdrawal history
 func withdrawalHistory(apiKey string) error {
-	fmt.Println("Withdrawal History:\n")
+	fmt.Println("Withdrawal History (last 10):\n")
 	url := "https://hashes.com/en/api/withdrawals?key=" + apiKey
 	resp, err := http.Get(url)
 	if err != nil {

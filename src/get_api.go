@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// case 8, get new API key
+// get new API key
 func getAPIKey(promptForNewKey bool) string {
 	if promptForNewKey {
 		clearScreen()

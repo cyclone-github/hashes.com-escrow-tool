@@ -8,7 +8,7 @@ import (
 	"text/tabwriter"
 )
 
-// case 2, get found history
+// get found history
 func getFoundHistory(apiKey string) error {
 	url := fmt.Sprintf("https://hashes.com/en/api/uploads?key=%s", apiKey)
 

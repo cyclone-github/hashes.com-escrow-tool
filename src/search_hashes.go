@@ -11,7 +11,7 @@ import (
 	"text/tabwriter"
 )
 
-// case 3, search hashes
+// search hashes
 func searchHashes(apiKey string, hashes []string) error {
 	var requestBody bytes.Buffer
 	writer := multipart.NewWriter(&requestBody)
@@ -43,22 +43,14 @@ func searchHashes(apiKey string, hashes []string) error {
 		return err
 	}
 
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', tabwriter.Debug)
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0) // Removed tabwriter.Debug
 	defer w.Flush()
 
 	founds, found := results["founds"]
-	if !found {
-		fmt.Println("No results found.")
-		return nil
-	}
-
-	foundsSlice, ok := founds.([]interface{})
-	if !ok {
-		fmt.Println("Unexpected results format.")
-		return nil
-	}
-
-	if len(foundsSlice) > 0 {
+	if found && len(founds.([]interface{})) > 0 {
+		fmt.Fprintln(w, "Found:")
+		fmt.Fprintln(w, "Hash\tPlain\tAlgorithm\t")
+		foundsSlice := founds.([]interface{})
 		for _, foundItem := range foundsSlice {
 			foundMap, ok := foundItem.(map[string]interface{})
 			if !ok {
@@ -66,21 +58,24 @@ func searchHashes(apiKey string, hashes []string) error {
 				continue
 			}
 
-			for key, value := range foundMap {
-				if key != "salt" || fmt.Sprint(value) != "" {
-					fmt.Fprintf(w, "%s:\t%s\n", key, fmt.Sprint(value))
-				}
-			}
-			fmt.Println()
+			hash, _ := foundMap["hash"].(string)
+			plain, _ := foundMap["plaintext"].(string)
+			algo, _ := foundMap["algorithm"].(string)
+			fmt.Fprintf(w, "%s\t%s\t%s\t\n", hash, plain, algo)
 		}
-	} else {
-		unfounds, unfound := results["unfounds"]
-		if unfound {
-			unfoundHashes, ok := unfounds.([]interface{})
-			if ok && len(unfoundHashes) > 0 {
-				fmt.Println("Hash not found.")
-			}
+	}
+
+	unfounds, unfound := results["unfounds"]
+	if unfound && len(unfounds.([]interface{})) > 0 {
+		fmt.Fprintln(w, "\nNot Found:")
+		for _, unfoundItem := range unfounds.([]interface{}) {
+			unfoundMap, _ := unfoundItem.(map[string]interface{})
+			fmt.Fprintf(w, "%s\t\n", unfoundMap["hash"].(string))
 		}
+	}
+
+	if cost, ok := results["cost"].(float64); ok {
+		fmt.Fprintf(w, "\nCredits used: %d\n", int(cost))
 	}
 
 	return nil

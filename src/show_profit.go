@@ -9,8 +9,9 @@ import (
 	"text/tabwriter"
 )
 
-// case 6, show profit
+// show profit
 func getProfit(apiKey string) error {
+	fmt.Println("Total Profit:\n")
 	url := fmt.Sprintf("https://hashes.com/en/api/profit?key=%s", apiKey)
 
 	resp, err := http.Get(url)
@@ -44,7 +45,6 @@ func getProfit(apiKey string) error {
 	}
 
 	writer := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', tabwriter.AlignRight|tabwriter.Debug)
-	fmt.Fprintln(writer, "Total Profit:")
 	fmt.Fprintln(writer, "Crypto \t Coins \t USD")
 
 	for currency, amount := range response.Currency {

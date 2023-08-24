@@ -9,8 +9,10 @@ import (
 	"text/tabwriter"
 )
 
-// case 5, get wallet balance
+// get wallet balance
 func getWalletBalances(apiKey string) error {
+	fmt.Println("Wallet Balance:\n")
+
 	url := fmt.Sprintf("https://hashes.com/en/api/balance?key=%s", apiKey)
 
 	resp, err := http.Get(url)

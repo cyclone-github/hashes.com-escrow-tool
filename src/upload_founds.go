@@ -11,13 +11,14 @@ import (
 	"time"
 )
 
-// case 1, upload founds
+// upload founds
 func uploadFounds(apiKey string) error {
-	clearScreen()
 	fmt.Println("Upload Founds:\n")
 	filePath, hashPlaintext := selectFile()
+
 	var file io.Reader
 	var filename string
+
 	if filePath == "PASTE" {
 		file = bytes.NewBufferString(hashPlaintext)
 		filename = time.Now().Format("150405") + ".txt"

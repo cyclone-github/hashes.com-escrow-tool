@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-// case 4, hash identifier
+// hash identifier
 func hashIdentifier(hash string, extended bool) error {
 	url := "https://hashes.com/en/api/identifier?hash=" + hash
 	if extended {

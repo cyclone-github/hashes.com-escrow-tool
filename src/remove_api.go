@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// case 9, remove API key
+// remove API key
 func removeAPIKey() {
 	fmt.Println("Are you sure you want to remove your API key? (y/n):")
 	var confirmation string

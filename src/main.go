@@ -8,13 +8,14 @@ import (
 
 // version history
 // v0.1.0; 2023-08-22.1100; initial github release
+// v0.1.2; 2023-08-24.1540; added download left lists
 
 // main function
 func main() {
 	clearScreen()
 	printCyclone()
 	fmt.Println(" ######################################################################")
-	fmt.Println("#              Cyclone's Hashes.com API Escrow Tool v0.1.0             #")
+	fmt.Println("#              Cyclone's Hashes.com API Escrow Tool v0.1.2             #")
 	fmt.Println("#            This tool requires an API key from hashes.com             #")
 	fmt.Println("#                   'Search Hashes' requires credits                   #")
 	fmt.Println("#                     See hashes.com for more info                     #")
@@ -29,13 +30,14 @@ func main() {
 		fmt.Println("\nSelect an option:")
 		fmt.Println("1.  Upload Founds")
 		fmt.Println("2.  Upload History")
-		fmt.Println("3.  Search Hashes")
-		fmt.Println("4.  Hash Identifier")
-		fmt.Println("5.  Wallet Balance")
-		fmt.Println("6.  Show Profit")
-		fmt.Println("7.  Withdrawal History")
-		fmt.Println("8.  Enter New API")
-		fmt.Println("9.  Remove API Key")
+		fmt.Println("3.  Download Left Lists")
+		fmt.Println("4.  Search Hashes")
+		fmt.Println("5.  Hash Identifier")
+		fmt.Println("6.  Wallet Balance")
+		fmt.Println("7.  Show Profit")
+		fmt.Println("8.  Withdrawal History")
+		fmt.Println("n.  Enter New API")
+		fmt.Println("r.  Remove API Key")
 		fmt.Println("c.  Clear Screen")
 		fmt.Println("q.  Quit")
 		var choice string
@@ -47,54 +49,63 @@ func main() {
 			clearScreen()
 			if err := uploadFounds(apiKey); err != nil {
 				fmt.Printf("An error occurred: %v\n", err)
-			}		
+			}
 		case "2":
 			// Show Upload History
 			clearScreen()
 			if err := getFoundHistory(apiKey); err != nil {
 				fmt.Printf("An error occurred: %v\n", err)
-			}		
+			}
 		case "3":
+			// Download Left Lists
+			clearScreen()
+			if err := downloadLeftList(apiKey); err != nil {
+				fmt.Printf("An error occurred: %v\n", err)
+			}
+		case "4":
 			// Search Hashes
 			clearScreen()
-			hashes := getHashesFromUser()
+			hashPlaintext := pasteHashes()
+			hashes := strings.Split(hashPlaintext, "\n")
 			if err := searchHashes(apiKey, hashes); err != nil {
 				fmt.Printf("An error occurred: %v\n", err)
-			}		
-		case "4":
+			}
+		case "5":
 			// Hash Identifier
 			clearScreen()
-			hashes := getHashesFromUser()
+			hashPlaintext := pasteHashes()
+			hashes := strings.Split(hashPlaintext, "\n")
 			if len(hashes) == 0 {
 				fmt.Println("No hash provided.")
 				break
 			}
-			hash := hashes[0]
-			if err := hashIdentifier(hash, true); err != nil {
-				fmt.Printf("An error occurred: %v\n", err)
+			for _, hash := range hashes {
+				if err := hashIdentifier(hash, true); err != nil {
+					fmt.Printf("An error occurred: %v\n", err)
+				}
 			}
-		case "5":
+		case "6":
 			// Wallet Balance
 			clearScreen()
 			if err := getWalletBalances(apiKey); err != nil {
 				fmt.Printf("An error occurred: %v\n", err)
 			}
-		case "6":
+		case "7":
 			// Show Profit
 			clearScreen()
 			if err := getProfit(apiKey); err != nil {
 				fmt.Printf("An error occurred: %v\n", err)
 			}
-		case "7":
+		case "8":
 			// Withdrawal History
 			clearScreen()
 			if err := withdrawalHistory(apiKey); err != nil {
 				fmt.Printf("An error occurred: %v\n", err)
 			}
-		case "8":
+		case "n":
 			// Enter New API
 			getAPIKey(true)
-		case "9":
+		case "r":
 			// Remove API Key
 			clearScreen()
 			removeAPIKey()
