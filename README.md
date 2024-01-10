@@ -24,6 +24,13 @@ https://github.com/PlumLulz/hashes.com-cli
 - Withdraw History
 - Saves API key locally with AES encrypted key file
 
-### Compile from source code info:
-- https://github.com/cyclone-github/scripts/blob/main/intro_to_go.txt
-- *example of compiling on windows from src directory:* `go build  -ldflags="-s -w" -o hashes_tool.exe .`
+### Compile from source:
+- If you want the latest features, compiling from source is the best option since the release version may run several revisions behind the source code.
+- This assumes you have Go and Git installed
+  - `git clone https://github.com/cyclone-github/hashes.com-escrow-tool.git`
+  - `cd hashes.com-escrow-tool/src`
+  - `go mod init hashes.com-escrow-tool`
+  - `go mod tidy`
+  - `go build -ldflags="-s -w" .`
+- Compile from source code how-to:
+  - https://github.com/cyclone-github/scripts/blob/main/intro_to_go.txt
