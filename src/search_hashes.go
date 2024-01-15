@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -17,6 +17,7 @@ func searchHashes(apiKey string, hashes []string) error {
 	writer := multipart.NewWriter(&requestBody)
 	_ = writer.WriteField("key", apiKey)
 	for _, hash := range hashes {
+		fmt.Printf("Searching hashes.com for %s...\n", hash)
 		_ = writer.WriteField("hashes[]", hash)
 	}
 	writer.Close()
@@ -33,7 +34,7 @@ func searchHashes(apiKey string, hashes []string) error {
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}

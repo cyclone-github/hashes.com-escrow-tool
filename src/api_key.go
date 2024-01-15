@@ -3,11 +3,13 @@ package main
 import (
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net"
 	"net/http"
 )
@@ -16,7 +18,7 @@ import (
 func getEncryptionKey() {
 	decodedSeed, err := base64.StdEncoding.DecodeString(base64StaticSeedKey)
 	if err != nil {
-		fmt.Printf("Error decoding Base64 static seed key: %v\n")
+		fmt.Printf("Error decoding Base64 static seed key: %v\n", err)
 		return
 	}
 
@@ -52,7 +54,12 @@ func encrypt(data []byte, passphrase string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	nonce := make([]byte, gcm.NonceSize())
+	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
+		return nil, err
+	}
+
 	ciphertext := gcm.Seal(nonce, nonce, data, nil)
 	return ciphertext, nil
 }

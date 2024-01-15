@@ -6,16 +6,26 @@ import (
 	"time"
 )
 
-// version history
-// v0.1.0; 2023-08-22.1100; initial github release
-// v0.1.2; 2023-08-24.1540; added download left lists
+/*
+Cyclone's Hashes.com API Escrow Tool
+This tool requires an API key from hashes.com
+'Search Hashes' requires credits
+See hashes.com for more info
+
+version history
+v0.1.0; 2023-08-18.1630; initial release
+v0.1.1; 2023-08-19.1945; added withdrawal history
+v0.1.1; 2023-08-20.1630; modified withdrawal history output with tabwriter
+v0.1.2; 2023-08-24.1540; added download left lists
+v0.1.3; 2024-01-14.1600; cleaned/updated code, changed last nth history from 10 to 20, updated API key encryption logic
+*/
 
 // main function
 func main() {
 	clearScreen()
 	printCyclone()
 	fmt.Println(" ######################################################################")
-	fmt.Println("#              Cyclone's Hashes.com API Escrow Tool v0.1.2             #")
+	fmt.Println("#              Cyclone's Hashes.com API Escrow Tool v0.1.3             #")
 	fmt.Println("#            This tool requires an API key from hashes.com             #")
 	fmt.Println("#                   'Search Hashes' requires credits                   #")
 	fmt.Println("#                     See hashes.com for more info                     #")
@@ -65,7 +75,7 @@ func main() {
 		case "4":
 			// Search Hashes
 			clearScreen()
-			hashPlaintext := pasteHashes()
+			hashPlaintext := pasteHashes("Search Hashes.com")
 			hashes := strings.Split(hashPlaintext, "\n")
 			if err := searchHashes(apiKey, hashes); err != nil {
 				fmt.Printf("An error occurred: %v\n", err)
@@ -73,7 +83,7 @@ func main() {
 		case "5":
 			// Hash Identifier
 			clearScreen()
-			hashPlaintext := pasteHashes()
+			hashPlaintext := pasteHashes("Hashes.com Identifier")
 			hashes := strings.Split(hashPlaintext, "\n")
 			if len(hashes) == 0 {
 				fmt.Println("No hash provided.")

@@ -11,7 +11,7 @@ import (
 
 // withdrawal history
 func withdrawalHistory(apiKey string) error {
-	fmt.Println("Withdrawal History (last 10):\n")
+	fmt.Println("Withdrawal History (last 20):\n")
 	url := "https://hashes.com/en/api/withdrawals?key=" + apiKey
 	resp, err := http.Get(url)
 	if err != nil {
@@ -37,18 +37,18 @@ func withdrawalHistory(apiKey string) error {
 		return fmt.Errorf("An error occurred: failed to decode response: %v", err)
 	}
 
-	end := 10
+	end := 20
 	if end > len(response.List) {
 		end = len(response.List)
 	}
-	first10 := response.List[:end]
+	last20 := response.List[:end]
 
-	for i, j := 0, len(first10)-1; i < j; i, j = i+1, j-1 {
-		first10[i], first10[j] = first10[j], first10[i]
+	for i, j := 0, len(last20)-1; i < j; i, j = i+1, j-1 {
+		last20[i], last20[j] = last20[j], last20[i]
 	}
 
 	uniqueCurrencies := map[string]float64{}
-	for _, withdrawal := range first10 {
+	for _, withdrawal := range last20 {
 		currency := withdrawal.Currency
 		if _, exists := uniqueCurrencies[currency]; !exists {
 			rate, err := toUSD(1, currency)
@@ -63,7 +63,7 @@ func withdrawalHistory(apiKey string) error {
 	writer := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', tabwriter.Debug)
 	fmt.Fprintln(writer, "Date\t Amount USD \t After Fee \t ID \t Crypto \t Transaction ID \t Destination Wallet")
 
-	for _, withdrawal := range first10 {
+	for _, withdrawal := range last20 {
 		amount, _ := strconv.ParseFloat(withdrawal.Amount, 64)
 		afterFee, _ := strconv.ParseFloat(withdrawal.AfterFee, 64)
 		conversionRate := uniqueCurrencies[withdrawal.Currency]

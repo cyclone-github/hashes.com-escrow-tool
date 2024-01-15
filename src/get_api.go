@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"time"
 )
@@ -22,7 +21,7 @@ func getAPIKey(promptForNewKey bool) string {
 					fmt.Printf("Error encrypting API key: %v\n", err)
 					continue
 				}
-				err = ioutil.WriteFile(apiKeyFile, encryptedKey, 0644)
+				err = os.WriteFile(apiKeyFile, encryptedKey, 0644)
 				if err != nil {
 					fmt.Printf("Error writing encrypted API key to file: %v\n", err)
 					continue
@@ -39,7 +38,7 @@ func getAPIKey(promptForNewKey bool) string {
 		var apiKey string
 
 		if _, err := os.Stat(apiKeyFile); err == nil {
-			encryptedKey, err := ioutil.ReadFile(apiKeyFile)
+			encryptedKey, err := os.ReadFile(apiKeyFile)
 			if err != nil {
 				fmt.Printf("Error reading API key file: %v\n", err)
 			} else {
@@ -62,7 +61,7 @@ func getAPIKey(promptForNewKey bool) string {
 			fmt.Printf("Error encrypting API key: %v\n", err)
 			continue
 		}
-		err = ioutil.WriteFile(apiKeyFile, encryptedKey, 0644)
+		err = os.WriteFile(apiKeyFile, encryptedKey, 0644)
 		if err != nil {
 			fmt.Printf("Error writing encrypted API key to file: %v\n", err)
 			continue

@@ -31,17 +31,17 @@ func getFoundHistory(apiKey string) error {
 		return fmt.Errorf("request was not successful")
 	}
 
-	fmt.Println("Upload History (last 10):\n")
+	fmt.Println("Upload History (last 20):\n")
 	writer := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', tabwriter.AlignRight|tabwriter.Debug)
 	defer writer.Flush()
 
-	fmt.Fprintln(writer, "ID\tDate\tBTC (USD)\tXMR (USD)\tLTC (USD)\tAlgo\t-m\tFound\tTotal\tStatus")
+	fmt.Fprintln(writer, "ID\tDate/Time\tBTC (USD)\tXMR (USD)\tLTC (USD)\t-m\tTotal\tFound\tStatus")
 
 	btcRate, _ := toUSD(1, "BTC")
 	xmrRate, _ := toUSD(1, "XMR")
 	ltcRate, _ := toUSD(1, "LTC")
 
-	startIndex := len(response.List) - 10
+	startIndex := len(response.List) - 20
 	if startIndex < 0 {
 		startIndex = 0
 	}
@@ -57,10 +57,8 @@ func getFoundHistory(apiKey string) error {
 		xmrUSD := fmt.Sprintf("$%.3f", xmr*parseFloat(xmrRate["currentprice"].(string)))
 		ltcUSD := fmt.Sprintf("$%.3f", ltc*parseFloat(ltcRate["currentprice"].(string)))
 
-		fmt.Fprintf(writer, "%d\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%d\t%s\n",
-			history.ID, history.Date,
-			btcUSD, xmrUSD, ltcUSD,
-			history.Algorithm, history.AlgorithmID, history.ValidHashes, history.TotalHashes, history.Status)
+		fmt.Fprintf(writer, "%d\t%s\t%s\t%s\t%s\t%d\t%d\t%d\t%s\n",
+			history.ID, history.Date, btcUSD, xmrUSD, ltcUSD, history.AlgorithmID, history.TotalHashes, history.ValidHashes, history.Status)
 	}
 
 	return nil

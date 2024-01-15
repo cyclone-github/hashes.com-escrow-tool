@@ -1,7 +1,28 @@
-# Cyclone's Hashes.com API Escrow Tool
+# Hashes.com API Escrow Tool
+```
+ ######################################################################
+#              Cyclone's Hashes.com API Escrow Tool v0.1.3             #
+#            This tool requires an API key from hashes.com             #
+#                   'Search Hashes' requires credits                   #
+#                     See hashes.com for more info                     #
+ ######################################################################
 
-![image](https://i.imgur.com/0W4O7Ex.png)
+API key verified
 
+Select an option:
+1.  Upload Founds
+2.  Upload History
+3.  Download Left Lists
+4.  Search Hashes
+5.  Hash Identifier
+6.  Wallet Balance
+7.  Show Profit
+8.  Withdrawal History
+n.  Enter New API
+r.  Remove API Key
+c.  Clear Screen
+q.  Quit
+```
 Tool written in Go for interacting with https://hashes.com escrow's API. Currently supports all known API calls from hashes.com.
 
 Crypto / USD prices provided by: https://api.kraken.com
@@ -29,7 +50,7 @@ https://github.com/PlumLulz/hashes.com-cli
 - This assumes you have Go and Git installed
   - `git clone https://github.com/cyclone-github/hashes.com-escrow-tool.git`
   - `cd hashes.com-escrow-tool/src`
-  - `go mod init hashes.com-escrow-tool`
+  - `go mod init escrow_tool`
   - `go mod tidy`
   - `go build -ldflags="-s -w" .`
 - Compile from source code how-to:

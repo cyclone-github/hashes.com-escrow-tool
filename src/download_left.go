@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -31,7 +31,7 @@ func downloadLeftList(apiKey string) error {
 			return
 		}
 		defer resp.Body.Close()
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			fmt.Printf("error reading response: %v\n", err)
 			return
@@ -42,12 +42,12 @@ func downloadLeftList(apiKey string) error {
 		}
 	}()
 
-	fmt.Print("Enter hash mode (ex: 0 for MD5): ")
+	fmt.Print("Enter hash mode (ex: 0 for MD5) or CTRL+C to cancel: ")
 	var hashMode string
 	fmt.Scanln(&hashMode)
-	fmt.Println("This may take a few minutes on large left lists...")
+	fmt.Println("This may appear to hang on large left lists...")
 
-	for response.Success == false {
+	for !response.Success {
 		time.Sleep(100 * time.Millisecond)
 	}
 
@@ -87,7 +87,7 @@ func downloadLeftList(apiKey string) error {
 				continue
 			}
 			defer resp.Body.Close()
-			content, err := ioutil.ReadAll(resp.Body)
+			content, err := io.ReadAll(resp.Body)
 			if err != nil {
 				fmt.Printf("error reading left list content: %v\n", err)
 				continue

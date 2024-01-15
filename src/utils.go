@@ -16,10 +16,13 @@ func parseFloat(value string) float64 {
 }
 
 // paste hashes
-func pasteHashes() string {
+func pasteHashes(action string) string {
+	fmt.Println(action)
 	fmt.Println("Paste one hash per line (press Enter twice to finish):")
+
 	reader := bufio.NewReader(os.Stdin)
 	var hashPlaintexts []string
+
 	for {
 		line, err := reader.ReadString('\n')
 		if err != nil || strings.TrimSpace(line) == "" {
@@ -27,6 +30,7 @@ func pasteHashes() string {
 		}
 		hashPlaintexts = append(hashPlaintexts, strings.TrimSpace(line))
 	}
+
 	return strings.Join(hashPlaintexts, "\n")
 }
 
@@ -57,7 +61,7 @@ func selectFile() (string, string) {
 		}
 
 		if input == "p" {
-			return "PASTE", pasteHashes()
+			return "PASTE", pasteHashes("")
 		}
 
 		if input == "c" {
