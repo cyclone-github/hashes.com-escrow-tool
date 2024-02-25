@@ -55,3 +55,10 @@ https://github.com/PlumLulz/hashes.com-cli
   - `go build -ldflags="-s -w" .`
 - Compile from source code how-to:
   - https://github.com/cyclone-github/scripts/blob/main/intro_to_go.txt
+
+### Change Log:
+- https://github.com/cyclone-github/hashes.com-escrow-tool/blob/main/CHANGELOG.md
+
+### Antivirus False Positives:
+- Several antivirus programs on VirusTotal incorrectly detect compiled Go binaries as a false positive. This issue primarily affects the Windows executable binary, but is not limited to it. If this concerns you, I recommend carefully reviewing the source code, then proceed to compile the binary yourself.
+- Uploading your compiled binaries to https://virustotal.com and leaving an up-vote or a comment would be helpful as well.
