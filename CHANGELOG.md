@@ -1,3 +1,8 @@
+### version 1.0.0; 2024-04-15.1500
+```
+fixed download deduplication
+published binaries for v1.0.0
+```
 ### version 0.1.3; 2024-02-25.1500
 ```
 published binaries for v0.1.3
