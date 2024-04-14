@@ -129,12 +129,17 @@ func downloadLeftList(apiKey string) error {
 	}
 	defer outFile.Close()
 
+	uniqueHashes := make(map[string]bool)
 	var totalUniqueHashes int
 	downloadedHashes.Range(func(_, value interface{}) bool {
 		hashes := value.(string)
-		outFile.WriteString(hashes)
-		outFile.WriteString("\n")
-		totalUniqueHashes += len(strings.Split(hashes, "\n")) - 1
+		for _, hash := range strings.Split(hashes, "\n") {
+			if hash != "" && !uniqueHashes[hash] {
+				uniqueHashes[hash] = true
+				outFile.WriteString(hash + "\n")
+				totalUniqueHashes++
+			}
+		}
 		return true
 	})
 

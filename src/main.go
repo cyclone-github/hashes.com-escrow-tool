@@ -18,6 +18,7 @@ v0.1.1; 2023-08-19.1945; added withdrawal history
 v0.1.1; 2023-08-20.1630; modified withdrawal history output with tabwriter
 v0.1.2; 2023-08-24.1540; added download left lists
 v0.1.3; 2024-01-14.1600; cleaned/updated code, changed last nth history from 10 to 20, updated API key encryption logic
+v1.0.0; 2024-04-14.1500; fixed download deduplication, release v1.0.0
 */
 
 // main function
@@ -25,7 +26,7 @@ func main() {
 	clearScreen()
 	printCyclone()
 	fmt.Println(" ######################################################################")
-	fmt.Println("#              Cyclone's Hashes.com API Escrow Tool v0.1.3             #")
+	fmt.Println("#              Cyclone's Hashes.com API Escrow Tool v1.0.0             #")
 	fmt.Println("#            This tool requires an API key from hashes.com             #")
 	fmt.Println("#                   'Search Hashes' requires credits                   #")
 	fmt.Println("#                     See hashes.com for more info                     #")
