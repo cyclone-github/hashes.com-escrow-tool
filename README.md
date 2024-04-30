@@ -1,3 +1,4 @@
+[![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=cyclone-github&repo=hashes.com-escrow-tool&theme=gruvbox)](https://github.com/cyclone-github/)
 # Hashes.com API Escrow Tool
 ```
  ######################################################################
