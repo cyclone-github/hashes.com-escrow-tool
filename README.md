@@ -1,4 +1,10 @@
-[![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=cyclone-github&repo=hashes.com-escrow-tool&theme=gruvbox)](https://github.com/cyclone-github/)
+[![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=cyclone-github&repo=hashes.com-escrow-tool&theme=gruvbox)](https://github.com/cyclone-github/hashes.com-escrow-tool/)
+
+<!-- [![Go Report Card](https://goreportcard.com/badge/github.com/cyclone-github/hashes.com-escrow-tool)](https://goreportcard.com/report/github.com/cyclone-github/hashes.com-escrow-tool) -->
+[![GitHub issues](https://img.shields.io/github/issues/cyclone-github/hashes.com-escrow-tool.svg)](https://github.com/cyclone-github/hashes.com-escrow-tool/issues)
+[![License](https://img.shields.io/github/license/cyclone-github/hashes.com-escrow-tool.svg)](LICENSE)
+[![GitHub release](https://img.shields.io/github/release/cyclone-github/hashes.com-escrow-tool.svg)](https://github.com/cyclone-github/hashes.com-escrow-tool/releases)
+
 # Hashes.com API Escrow Tool
 ```
  ######################################################################
