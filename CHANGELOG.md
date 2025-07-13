@@ -1,3 +1,7 @@
+### v1.0.1; 2025-07-12.2145
+```
+maintenance release
+```
 ### version 1.0.0; 2024-04-15.1500
 ```
 fixed download deduplication

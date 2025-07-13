@@ -8,7 +8,7 @@
 # Hashes.com API Escrow Tool
 ```
  ######################################################################
-#              Cyclone's Hashes.com API Escrow Tool v1.0.0             #
+#              Cyclone's Hashes.com API Escrow Tool v1.0.1             #
 #            This tool requires an API key from hashes.com             #
 #                   'Search Hashes' requires credits                   #
 #                     See hashes.com for more info                     #
@@ -63,8 +63,12 @@ https://github.com/PlumLulz/hashes.com-cli
 - Compile from source code how-to:
   - https://github.com/cyclone-github/scripts/blob/main/intro_to_go.txt
 
-### Change Log:
+### Changelog:
 - https://github.com/cyclone-github/hashes.com-escrow-tool/blob/main/CHANGELOG.md
+
+### Mentions:
+- hashes.com offical docs: https://hashes.com/docs
+- hashpwn forum: https://forum.hashpwn.net/post/76
 
 ### Antivirus False Positives:
 - Several antivirus programs on VirusTotal incorrectly detect compiled Go binaries as a false positive. This issue primarily affects the Windows executable binary, but is not limited to it. If this concerns you, I recommend carefully reviewing the source code, then proceed to compile the binary yourself.
