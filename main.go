@@ -22,6 +22,7 @@ v0.1.2; 2023-08-24.1540; added download left lists
 v0.1.3; 2024-01-14.1600; cleaned/updated code, changed last nth history from 10 to 20, updated API key encryption logic
 v1.0.0; 2024-04-14.1500; fixed download deduplication, release v1.0.0
 v1.0.1; 2025-07-12.2145; maintenance release
+v1.1.0; 2025-07-14.0900; replace Kraken crypto to USD conversion with https://hashes.com/en/api/conversion
 */
 
 // main function
@@ -29,7 +30,7 @@ func main() {
 	clearScreen()
 	printCyclone()
 	fmt.Println(" ######################################################################")
-	fmt.Println("#              Cyclone's Hashes.com API Escrow Tool v1.0.1             #")
+	fmt.Println("#              Cyclone's Hashes.com API Escrow Tool v1.1.0             #")
 	fmt.Println("#           github.com/cyclone-github/hashes.com-escrow-tool           #")
 	fmt.Println("#            This tool requires an API key from hashes.com             #")
 	fmt.Println("#                   'Search Hashes' requires credits                   #")
