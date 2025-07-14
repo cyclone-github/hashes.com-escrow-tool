@@ -1,3 +1,7 @@
+### v1.1.0; 2025-07-14.0900
+```
+replace Kraken crypto to USD conversion with https://hashes.com/en/api/conversion
+```
 ### v1.0.1; 2025-07-12.2145
 ```
 maintenance release
