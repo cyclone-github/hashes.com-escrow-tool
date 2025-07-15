@@ -1,12 +1,9 @@
 package main
 
 import (
-	"io"
 	"log"
 	"net/url"
 	"os"
-	"os/signal"
-	"syscall"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -38,22 +35,6 @@ func connect(apiKey string) (*websocket.Conn, error) {
 
 // start websocket feed
 func monitorWebsocket(apiKey string) error {
-	// open log file
-	file, err := os.OpenFile("websocket.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	// send all logs to stderr (and to file)
-	mw := io.MultiWriter(os.Stderr, file)
-	log.SetOutput(mw)
-
-	// trap SIGINT/SIGTERM to exit on Ctrl+C
-	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, os.Interrupt, syscall.SIGTERM)
-	defer signal.Stop(sigs)
-
 	start := func() {
 		conn, err := connect(apiKey)
 		if err != nil {
@@ -82,26 +63,14 @@ func monitorWebsocket(apiKey string) error {
 				log.Println("read:", err)
 				break
 			}
-			// raw json only
 			os.Stdout.Write(append(message, '\n'))
 		}
 	}
 
-	// reconnect loop (exit on signal)
+	// reconnect loop
 	for {
-		done := make(chan struct{})
-		go func() {
-			start()
-			close(done)
-		}()
-
-		select {
-		case <-sigs:
-			log.Println("Interrupt received, stopping monitor")
-			return nil
-		case <-done:
-			log.Println("Disconnected! Reconnecting.")
-			time.Sleep(reconnectInterval)
-		}
+		start()
+		log.Println("Disconnected! Reconnecting.")
+		time.Sleep(reconnectInterval)
 	}
 }

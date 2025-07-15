@@ -38,7 +38,7 @@ v1.0.1; 2025-07-12.2145
 	maintenance release
 v1.1.0; 2025-07-14.0900
 	replace Kraken crypto to USD conversion with https://hashes.com/en/api/conversion
-v1.1.1; 2025-07-15.0900
+v1.1.1; 2025-07-15.0950
 	updated print statements to use stdout / stderr where applicable
 	beta: added escrow websocket monitor (option #9)
 	beta: added -websocket flag to start tool in escrow websocket monitor mode
@@ -58,7 +58,7 @@ func main() {
 		return
 	}
 	if *versionFlag {
-		version := "Cyclone's Hashes.com API Escrow Tool v1.1.1"
+		version := "Cyclone's Hashes.com API Escrow Tool v1.1.1; 2025-07-15.0950"
 		fmt.Fprintln(os.Stderr, version)
 		return
 	}
@@ -165,7 +165,7 @@ func main() {
 		case "9":
 			// Monitor Escrow WebSocket // beta
 			clearScreen()
-			log.Println("Starting Hashes.com Escrow WebSocket Monitor\nPress CTR+C to return to main menu\n")
+			log.Println("Starting Hashes.com Escrow WebSocket Monitor\nPress CTR+C to quit\n")
 			if err := monitorWebsocket(apiKey); err != nil {
 				fmt.Fprintf(os.Stderr, "An error occurred: %v\n", err)
 			}
