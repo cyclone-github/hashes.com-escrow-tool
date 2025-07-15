@@ -12,13 +12,14 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"os"
 )
 
 // generate unique encryption key
 func getEncryptionKey() {
 	decodedSeed, err := base64.StdEncoding.DecodeString(base64StaticSeedKey)
 	if err != nil {
-		fmt.Printf("Error decoding Base64 static seed key: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error decoding Base64 static seed key: %v\n", err)
 		return
 	}
 
@@ -96,7 +97,7 @@ func verifyAPIKey(apiKey string) bool {
 
 	resp, err := http.Get(url)
 	if err != nil {
-		fmt.Printf("Failed to send request: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Failed to send request: %v\n", err)
 		return false
 	}
 	defer resp.Body.Close()
@@ -106,12 +107,12 @@ func verifyAPIKey(apiKey string) bool {
 	}
 	err = json.NewDecoder(resp.Body).Decode(&response)
 	if err != nil {
-		fmt.Printf("Failed to decode response: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Failed to decode response: %v\n", err)
 		return false
 	}
 
 	if response.Success {
-		fmt.Println("API key verified")
+		fmt.Fprintln(os.Stderr, "API key verified")
 		return true
 	}
 

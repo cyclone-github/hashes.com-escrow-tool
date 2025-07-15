@@ -8,7 +8,8 @@
 # Hashes.com API Escrow Tool
 ```
  ######################################################################
-#              Cyclone's Hashes.com API Escrow Tool v1.1.0             #
+#              Cyclone's Hashes.com API Escrow Tool v1.1.1             #
+#           github.com/cyclone-github/hashes.com-escrow-tool           #
 #            This tool requires an API key from hashes.com             #
 #                   'Search Hashes' requires credits                   #
 #                     See hashes.com for more info                     #
@@ -25,6 +26,7 @@ Select an option:
 6.  Wallet Balance
 7.  Show Profit
 8.  Withdrawal History
+9.  Monitor Escrow WebSocket
 n.  Enter New API
 r.  Remove API Key
 c.  Clear Screen
@@ -32,7 +34,7 @@ q.  Quit
 ```
 Tool written in Go for interacting with https://hashes.com escrow's API. Currently supports all known API calls from hashes.com.
 
-Inspiration from Plum's python3 script:
+Inspiration from Plum's python3 CLI tool:
 https://github.com/PlumLulz/hashes.com-cli
  
 ### Features:
@@ -48,7 +50,16 @@ https://github.com/PlumLulz/hashes.com-cli
 - Wallet Balance
 - Show Profit
 - Withdraw History
+- Monitor Escrow WebSocket
 - Saves API key locally with AES encrypted key file
+
+### Usage:
+- Run tool normally
+  - `escrow_tool`
+- Start tool in websocket escrow monitor mode (can be used to monitor escrow and/or pipe escrow job json into external program)
+  - `escrow_tool -websocket`
+  - `escrow_tool -websocket | jq`
+  - `escrow_tool -websocket | escrow_cracking_bot`
 
 ### Compile from source:
 - If you want the latest features, compiling from source is the best option since the release version may run several revisions behind the source code.
