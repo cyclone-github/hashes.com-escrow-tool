@@ -11,7 +11,7 @@ import (
 
 // withdrawal history
 func withdrawalHistory(apiKey string) error {
-	fmt.Println("Withdrawal History (last 20):\n")
+	fmt.Fprintln(os.Stderr, "Withdrawal History (last 20):\n")
 	url := "https://hashes.com/en/api/withdrawals?key=" + apiKey
 	resp, err := http.Get(url)
 	if err != nil {

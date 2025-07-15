@@ -17,8 +17,8 @@ func parseFloat(value string) float64 {
 
 // paste hashes
 func pasteHashes(action string) string {
-	fmt.Println(action)
-	fmt.Println("Paste one hash per line (press Enter twice to finish):")
+	fmt.Fprintln(os.Stderr, action)
+	fmt.Fprintln(os.Stderr, "Paste one hash per line (press Enter twice to finish):")
 
 	reader := bufio.NewReader(os.Stdin)
 	var hashPlaintexts []string
@@ -38,18 +38,18 @@ func pasteHashes(action string) string {
 func selectFile() (string, string) {
 	files, err := filepath.Glob("*.txt")
 	if err != nil {
-		fmt.Printf("Error reading files: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error reading files: %v\n", err)
 		return "", ""
 	}
 
 	for {
-		fmt.Println("Select a file to upload:")
+		fmt.Fprintln(os.Stderr, "Select a file to upload:")
 		for i, file := range files {
-			fmt.Printf("%d. %s\n", i+1, file)
+			fmt.Fprintf(os.Stderr, "%d. %s\n", i+1, file)
 		}
-		fmt.Println("p. Paste hash:plaintext")
-		fmt.Println("c. Custom file path")
-		fmt.Println("m. Return to Menu")
+		fmt.Fprintln(os.Stderr, "p. Paste hash:plaintext")
+		fmt.Fprintln(os.Stderr, "c. Custom file path")
+		fmt.Fprintln(os.Stderr, "m. Return to Menu")
 
 		var input string
 		fmt.Scanln(&input)
@@ -65,7 +65,7 @@ func selectFile() (string, string) {
 		}
 
 		if input == "c" {
-			fmt.Println("Enter the full path of the file:")
+			fmt.Fprintln(os.Stderr, "Enter the full path of the file:")
 			var customFilePath string
 			fmt.Scanln(&customFilePath)
 			return customFilePath, ""
@@ -76,6 +76,6 @@ func selectFile() (string, string) {
 			return files[choice-1], ""
 		}
 
-		fmt.Println("Invalid selection. Try again.")
+		fmt.Fprintln(os.Stderr, "Invalid selection. Try again.")
 	}
 }

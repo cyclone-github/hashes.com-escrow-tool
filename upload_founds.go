@@ -13,7 +13,7 @@ import (
 
 // upload founds
 func uploadFounds(apiKey string) error {
-	fmt.Println("Upload Founds:\n")
+	fmt.Fprintln(os.Stderr, "Upload Founds:\n")
 	filePath, hashPlaintext := selectFile()
 
 	var file io.Reader
@@ -34,7 +34,7 @@ func uploadFounds(apiKey string) error {
 		filename = filePath
 	}
 
-	fmt.Println("Enter algorithm ID:")
+	fmt.Fprintln(os.Stderr, "Enter algorithm ID:")
 	var algo string
 	fmt.Scanln(&algo)
 
@@ -84,7 +84,7 @@ func uploadFounds(apiKey string) error {
 		return fmt.Errorf("Upload failed")
 	}
 
-	fmt.Println("Upload Successful")
+	fmt.Fprintln(os.Stderr, "Upload Successful")
 
 	return nil
 }

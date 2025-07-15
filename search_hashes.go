@@ -17,7 +17,7 @@ func searchHashes(apiKey string, hashes []string) error {
 	writer := multipart.NewWriter(&requestBody)
 	_ = writer.WriteField("key", apiKey)
 	for _, hash := range hashes {
-		fmt.Printf("Searching hashes.com for %s...\n", hash)
+		fmt.Fprintf(os.Stderr, "Searching hashes.com for %s...\n", hash)
 		_ = writer.WriteField("hashes[]", hash)
 	}
 	writer.Close()
@@ -55,7 +55,7 @@ func searchHashes(apiKey string, hashes []string) error {
 		for _, foundItem := range foundsSlice {
 			foundMap, ok := foundItem.(map[string]interface{})
 			if !ok {
-				fmt.Println("Unexpected item format.")
+				fmt.Fprintln(os.Stderr, "Unexpected item format.")
 				continue
 			}
 

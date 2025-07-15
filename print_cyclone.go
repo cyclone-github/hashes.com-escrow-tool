@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"time"
 )
 
@@ -15,7 +16,7 @@ func printCyclone() {
  \____)\__  |\____)\_)___/|_| |_|_____)
       (____/                           
 `
-	fmt.Println(cyclone)
+	fmt.Fprintln(os.Stderr, cyclone)
 	time.Sleep(1 * time.Second)
 	clearScreen()
 }

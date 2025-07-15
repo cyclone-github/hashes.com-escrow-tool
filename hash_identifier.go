@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 )
 
 // hash identifier
@@ -32,15 +33,15 @@ func hashIdentifier(hash string, extended bool) error {
 
 	if success, ok := result["success"].(bool); ok && success {
 		if algorithms, ok := result["algorithms"].([]interface{}); ok && len(algorithms) > 0 {
-			fmt.Println("Possible Algorithms:")
+			fmt.Fprintln(os.Stderr, "Possible Algorithms:")
 			for _, algo := range algorithms {
-				fmt.Printf("  %s\n", algo)
+				fmt.Fprintf(os.Stderr, "  %s\n", algo)
 			}
 		} else {
-			fmt.Println("No algorithms found.")
+			fmt.Fprintln(os.Stderr, "No algorithms found.")
 		}
 	} else {
-		fmt.Println("No results found.")
+		fmt.Fprintln(os.Stderr, "No results found.")
 	}
 
 	return nil

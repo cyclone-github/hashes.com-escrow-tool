@@ -31,7 +31,7 @@ func getFoundHistory(apiKey string) error {
 		return fmt.Errorf("request was not successful")
 	}
 
-	fmt.Println("Upload History (last 20):\n")
+	fmt.Fprintln(os.Stderr, "Upload History (last 20):\n")
 	writer := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', tabwriter.AlignRight|tabwriter.Debug)
 	defer writer.Flush()
 

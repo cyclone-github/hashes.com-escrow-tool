@@ -1,3 +1,8 @@
+### v1.1.1; 2025-07-15.0900
+updated print statements to use stdout / stderr where applicable
+beta: added escrow websocket monitor (option #9)
+beta: added -websocket flag to start tool in escrow websocket monitor mode
+```
 ### v1.1.0; 2025-07-14.0900
 ```
 replace Kraken crypto to USD conversion with https://hashes.com/en/api/conversion

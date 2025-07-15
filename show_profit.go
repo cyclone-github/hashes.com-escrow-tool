@@ -11,7 +11,7 @@ import (
 
 // show profit
 func getProfit(apiKey string) error {
-	fmt.Println("Total Profit:\n")
+	fmt.Fprintln(os.Stderr, "Total Profit:\n")
 	url := fmt.Sprintf("https://hashes.com/en/api/profit?key=%s", apiKey)
 
 	resp, err := http.Get(url)

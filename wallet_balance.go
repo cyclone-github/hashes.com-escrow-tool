@@ -11,7 +11,7 @@ import (
 
 // get wallet balance
 func getWalletBalances(apiKey string) error {
-	fmt.Println("Wallet Balance:\n")
+	fmt.Fprintln(os.Stderr, "Wallet Balance:\n")
 
 	url := fmt.Sprintf("https://hashes.com/en/api/balance?key=%s", apiKey)
 
