@@ -8,7 +8,7 @@
 # Hashes.com API Escrow Tool
 ```
  ######################################################################
-#              Cyclone's Hashes.com API Escrow Tool v1.1.1             #
+#              Cyclone's Hashes.com API Escrow Tool v1.1.2             #
 #           github.com/cyclone-github/hashes.com-escrow-tool           #
 #            This tool requires an API key from hashes.com             #
 #                   'Search Hashes' requires credits                   #
@@ -61,13 +61,19 @@ https://github.com/PlumLulz/hashes.com-cli
   - `escrow_tool -websocket | jq`
   - `escrow_tool -websocket | escrow_cracking_bot`
 
+### Install latest release:
+```
+go install github.com/cyclone-github/hashes.com-escrow-tool@latest
+```
+### Install from latest source code (bleeding edge):
+```
+go install github.com/cyclone-github/hashes.com-escrow-tool@main
+```
 ### Compile from source:
 - If you want the latest features, compiling from source is the best option since the release version may run several revisions behind the source code.
 - This assumes you have Go and Git installed
   - `git clone https://github.com/cyclone-github/hashes.com-escrow-tool.git`  # clone repo
   - `cd hashes.com-escrow-tool`                                               # enter project directory
-  - `go mod init escrow_tool`                                      # initialize Go module (skips if go.mod exists)
-  - `go mod tidy`                                              # download dependencies
   - `go build -ldflags="-s -w" .`                              # compile binary in current directory
   - `go install -ldflags="-s -w" .`                            # compile binary and install to $GOPATH
 - Compile from source code how-to:

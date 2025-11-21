@@ -25,7 +25,12 @@ func connect(apiKey string) (*websocket.Conn, error) {
 	u.RawQuery = q.Encode()
 
 	log.Printf("connecting to %s", u.String())
-	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
+
+	dialer := *websocket.DefaultDialer
+	dialer.NetDialContext = netDialer.DialContext
+	dialer.HandshakeTimeout = 5 * time.Second
+
+	c, _, err := dialer.Dial(u.String(), nil)
 	if err != nil {
 		log.Println("dial:", err)
 		return nil, err
@@ -63,7 +68,7 @@ func monitorWebsocket(apiKey string) error {
 				log.Println("read:", err)
 				break
 			}
-			os.Stdout.Write(append(message, '\n'))
+			_, _ = os.Stdout.Write(append(message, '\n'))
 		}
 	}
 

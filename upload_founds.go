@@ -3,9 +3,11 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"mime/multipart"
+	"net"
 	"net/http"
 	"os"
 	"time"
@@ -13,7 +15,9 @@ import (
 
 // upload founds
 func uploadFounds(apiKey string) error {
-	fmt.Fprintln(os.Stderr, "Upload Founds:\n")
+	fmt.Fprintln(os.Stderr, "Upload Founds:")
+	fmt.Fprintln(os.Stderr)
+
 	filePath, hashPlaintext := selectFile()
 
 	var file io.Reader
@@ -48,13 +52,11 @@ func uploadFounds(apiKey string) error {
 	if err != nil {
 		return fmt.Errorf("An error occurred: failed to create form file: %v", err)
 	}
-	_, err = io.Copy(filePart, file)
-	if err != nil {
+	if _, err = io.Copy(filePart, file); err != nil {
 		return fmt.Errorf("An error occurred: failed to copy file: %v", err)
 	}
 
-	err = writer.Close()
-	if err != nil {
+	if err = writer.Close(); err != nil {
 		return fmt.Errorf("An error occurred: failed to close writer: %v", err)
 	}
 
@@ -65,9 +67,13 @@ func uploadFounds(apiKey string) error {
 	}
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := httpClient.Do(req)
 	if err != nil {
+		var netErr net.Error
+		if errors.As(err, &netErr) && netErr.Timeout() {
+			fmt.Fprintln(os.Stderr, "Request timed out while uploading founds.")
+			return nil // non-fatal
+		}
 		return fmt.Errorf("An error occurred: failed to send request: %v", err)
 	}
 	defer resp.Body.Close()
@@ -75,8 +81,7 @@ func uploadFounds(apiKey string) error {
 	var response struct {
 		Success bool `json:"success"`
 	}
-	err = json.NewDecoder(resp.Body).Decode(&response)
-	if err != nil {
+	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
 		return fmt.Errorf("An error occurred: failed to decode response: %v", err)
 	}
 

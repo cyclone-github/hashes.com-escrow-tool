@@ -3,9 +3,11 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"mime/multipart"
+	"net"
 	"net/http"
 	"os"
 	"text/tabwriter"
@@ -15,6 +17,7 @@ import (
 func searchHashes(apiKey string, hashes []string) error {
 	var requestBody bytes.Buffer
 	writer := multipart.NewWriter(&requestBody)
+
 	_ = writer.WriteField("key", apiKey)
 	for _, hash := range hashes {
 		fmt.Fprintf(os.Stderr, "Searching hashes.com for %s...\n", hash)
@@ -28,8 +31,14 @@ func searchHashes(apiKey string, hashes []string) error {
 	}
 
 	req.Header.Set("Content-Type", writer.FormDataContentType())
-	resp, err := http.DefaultClient.Do(req)
+
+	resp, err := httpClient.Do(req)
 	if err != nil {
+		var netErr net.Error
+		if errors.As(err, &netErr) && netErr.Timeout() {
+			fmt.Fprintln(os.Stderr, "Request timed out while searching hashes.")
+			return nil // non-fatal
+		}
 		return err
 	}
 	defer resp.Body.Close()
@@ -44,37 +53,45 @@ func searchHashes(apiKey string, hashes []string) error {
 		return err
 	}
 
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0) // Removed tabwriter.Debug
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
 	defer w.Flush()
 
-	founds, found := results["founds"]
-	if found && len(founds.([]interface{})) > 0 {
-		fmt.Fprintln(w, "Found:")
-		fmt.Fprintln(w, "Hash\tPlain\tAlgorithm\t")
-		foundsSlice := founds.([]interface{})
-		for _, foundItem := range foundsSlice {
-			foundMap, ok := foundItem.(map[string]interface{})
-			if !ok {
-				fmt.Fprintln(os.Stderr, "Unexpected item format.")
-				continue
+	// found hashes
+	if founds, ok := results["founds"]; ok {
+		if foundsSlice, ok := founds.([]interface{}); ok && len(foundsSlice) > 0 {
+			fmt.Fprintln(w, "Found:")
+			fmt.Fprintln(w, "Hash\tPlain\tAlgorithm\t")
+			for _, item := range foundsSlice {
+				foundMap, ok := item.(map[string]interface{})
+				if !ok {
+					fmt.Fprintln(os.Stderr, "Unexpected item format.")
+					continue
+				}
+
+				hash, _ := foundMap["hash"].(string)
+				plain, _ := foundMap["plaintext"].(string)
+				algo, _ := foundMap["algorithm"].(string)
+				fmt.Fprintf(w, "%s\t%s\t%s\t\n", hash, plain, algo)
 			}
-
-			hash, _ := foundMap["hash"].(string)
-			plain, _ := foundMap["plaintext"].(string)
-			algo, _ := foundMap["algorithm"].(string)
-			fmt.Fprintf(w, "%s\t%s\t%s\t\n", hash, plain, algo)
 		}
 	}
 
-	unfounds, unfound := results["unfounds"]
-	if unfound && len(unfounds.([]interface{})) > 0 {
-		fmt.Fprintln(w, "\nNot Found:")
-		for _, unfoundItem := range unfounds.([]interface{}) {
-			unfoundMap, _ := unfoundItem.(map[string]interface{})
-			fmt.Fprintf(w, "%s\t\n", unfoundMap["hash"].(string))
+	// unfound hashes
+	if unfounds, ok := results["unfounds"]; ok {
+		if unfoundsSlice, ok := unfounds.([]interface{}); ok && len(unfoundsSlice) > 0 {
+			fmt.Fprintln(w, "\nNot Found:")
+			for _, item := range unfoundsSlice {
+				unfoundMap, ok := item.(map[string]interface{})
+				if !ok {
+					continue
+				}
+				hash, _ := unfoundMap["hash"].(string)
+				fmt.Fprintf(w, "%s\t\n", hash)
+			}
 		}
 	}
 
+	// credits used
 	if cost, ok := results["cost"].(float64); ok {
 		fmt.Fprintf(w, "\nCredits used: %d\n", int(cost))
 	}

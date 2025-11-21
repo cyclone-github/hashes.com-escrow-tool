@@ -2,8 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
-	"net/http"
+	"net"
 	"os"
 	"strconv"
 	"text/tabwriter"
@@ -11,11 +12,18 @@ import (
 
 // show profit
 func getProfit(apiKey string) error {
-	fmt.Fprintln(os.Stderr, "Total Profit:\n")
+	fmt.Fprintln(os.Stderr, "Total Profit:")
+	fmt.Fprintln(os.Stderr)
+
 	url := fmt.Sprintf("https://hashes.com/en/api/profit?key=%s", apiKey)
 
-	resp, err := http.Get(url)
+	resp, err := httpClient.Get(url)
 	if err != nil {
+		var netErr net.Error
+		if errors.As(err, &netErr) && netErr.Timeout() {
+			fmt.Fprintln(os.Stderr, "Request timed out while fetching profit.")
+			return nil // non-fatal
+		}
 		return fmt.Errorf("failed to send request: %v", err)
 	}
 	defer resp.Body.Close()
@@ -24,8 +32,8 @@ func getProfit(apiKey string) error {
 		Success  bool              `json:"success"`
 		Currency map[string]string `json:"currency"`
 	}
-	err = json.NewDecoder(resp.Body).Decode(&response)
-	if err != nil {
+
+	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
 		return fmt.Errorf("failed to decode response: %v", err)
 	}
 
@@ -37,8 +45,7 @@ func getProfit(apiKey string) error {
 	for currency, value := range response.Currency {
 		if valueFloat, err := strconv.ParseFloat(value, 64); err == nil {
 			usdValue, _ := toUSD(valueFloat, currency)
-			usdValueConverted, ok := usdValue["converted"]
-			if ok {
+			if usdValueConverted, ok := usdValue["converted"]; ok {
 				usd[currency] = fmt.Sprintf("%v", usdValueConverted)
 			}
 		}

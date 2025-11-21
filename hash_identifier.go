@@ -2,9 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
-	"net/http"
+	"net"
 	"os"
 )
 
@@ -15,8 +16,13 @@ func hashIdentifier(hash string, extended bool) error {
 		url += "&extended=true"
 	}
 
-	resp, err := http.Get(url)
+	resp, err := httpClient.Get(url)
 	if err != nil {
+		var netErr net.Error
+		if errors.As(err, &netErr) && netErr.Timeout() {
+			fmt.Fprintln(os.Stderr, "Request timed out while identifying hash.")
+			return nil // non-fatal
+		}
 		return err
 	}
 	defer resp.Body.Close()

@@ -42,6 +42,9 @@ v1.1.1; 2025-07-15.0950
 	updated print statements to use stdout / stderr where applicable
 	beta: added escrow websocket monitor (option #9)
 	beta: added -websocket flag to start tool in escrow websocket monitor mode
+v1.1.2; 2025-11-21
+	fixed redundant new line logic
+	added http timeouts
 */
 
 // main function
@@ -58,7 +61,7 @@ func main() {
 		return
 	}
 	if *versionFlag {
-		version := "Cyclone's Hashes.com API Escrow Tool v1.1.1; 2025-07-15.0950"
+		version := "Cyclone's Hashes.com API Escrow Tool v1.1.2; 2025-11-21"
 		fmt.Fprintln(os.Stderr, version)
 		return
 	}
@@ -76,17 +79,19 @@ func main() {
 	clearScreen()
 	printCyclone()
 	fmt.Fprintln(os.Stderr, " ######################################################################")
-	fmt.Fprintln(os.Stderr, "#              Cyclone's Hashes.com API Escrow Tool v1.1.1             #")
+	fmt.Fprintln(os.Stderr, "#              Cyclone's Hashes.com API Escrow Tool v1.1.2             #")
 	fmt.Fprintln(os.Stderr, "#           github.com/cyclone-github/hashes.com-escrow-tool           #")
 	fmt.Fprintln(os.Stderr, "#            This tool requires an API key from hashes.com             #")
 	fmt.Fprintln(os.Stderr, "#                   'Search Hashes' requires credits                   #")
 	fmt.Fprintln(os.Stderr, "#                     See hashes.com for more info                     #")
-	fmt.Fprintln(os.Stderr, " ######################################################################\n")
+	fmt.Fprintln(os.Stderr, " ######################################################################")
+	fmt.Fprintln(os.Stderr)
 	apiKey := getAPIKey(false)
 	for {
 		// CLI Menu
 		time.Sleep(100 * time.Millisecond)
-		fmt.Fprintln(os.Stderr, "\nSelect an option:")
+		fmt.Fprintln(os.Stderr)
+		fmt.Fprintln(os.Stderr, "Select an option:")
 		fmt.Fprintln(os.Stderr, "1.  Upload Founds")
 		fmt.Fprintln(os.Stderr, "2.  Upload History")
 		fmt.Fprintln(os.Stderr, "3.  Download Left Lists")
@@ -165,7 +170,8 @@ func main() {
 		case "9":
 			// Monitor Escrow WebSocket // beta
 			clearScreen()
-			log.Println("Starting Hashes.com Escrow WebSocket Monitor\nPress CTR+C to quit\n")
+			log.Println("Starting Hashes.com Escrow WebSocket Monitor\nPress CTR+C to quit")
+			fmt.Fprintln(os.Stderr)
 			if err := monitorWebsocket(apiKey); err != nil {
 				fmt.Fprintf(os.Stderr, "An error occurred: %v\n", err)
 			}

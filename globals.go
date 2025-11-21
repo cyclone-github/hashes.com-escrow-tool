@@ -1,5 +1,11 @@
 package main
 
+import (
+	"net"
+	"net/http"
+	"time"
+)
+
 // global structs, constants and variables
 type FoundHistory struct {
 	ID          int    `json:"id"`
@@ -28,4 +34,13 @@ const (
 
 var (
 	encryptionKey string
+
+	httpClient = &http.Client{
+		Timeout: 5 * time.Second,
+	}
+
+	netDialer = &net.Dialer{
+		Timeout:   5 * time.Second,
+		KeepAlive: 30 * time.Second,
+	}
 )
