@@ -1,3 +1,8 @@
+### v1.1.2; 2025-11-21
+```
+fixed redundant new line logic
+added http timeouts
+```
 ### v1.1.1; 2025-07-15.0900
 ```
 updated print statements to use stdout / stderr where applicable

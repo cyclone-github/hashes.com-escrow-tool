@@ -2,9 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
-	"net/http"
+	"net"
 	"os"
 	"strings"
 	"sync"
@@ -13,49 +14,61 @@ import (
 
 // download left lists
 func downloadLeftList(apiKey string) error {
-	fmt.Print("Download Left Lists:\n\n")
+	fmt.Fprintln(os.Stderr, "Download Left Lists:")
+	fmt.Fprintln(os.Stderr)
 
 	var response struct {
-		Success bool
+		Success bool `json:"success"`
 		List    []struct {
-			AlgorithmID int
-			LeftList    string
-		}
+			AlgorithmID int    `json:"algorithmId"`
+			LeftList    string `json:"leftList"`
+		} `json:"list"`
 	}
 
-	go func() {
-		url := "https://hashes.com/en/api/jobs?key=" + apiKey
-		resp, err := http.Get(url)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "error sending request: %v\n", err)
-			return
+	// fetch jobs list (with timeout via global httpClient)
+	url := "https://hashes.com/en/api/jobs?key=" + apiKey
+	resp, err := httpClient.Get(url)
+	if err != nil {
+		var netErr net.Error
+		if errors.As(err, &netErr) && netErr.Timeout() {
+			fmt.Fprintln(os.Stderr, "Request timed out while fetching jobs list.")
+		} else {
+			fmt.Fprintf(os.Stderr, "Error sending request: %v\n", err)
 		}
-		defer resp.Body.Close()
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "error reading response: %v\n", err)
-			return
-		}
-		if err := json.Unmarshal(body, &response); err != nil {
-			fmt.Fprintf(os.Stderr, "error unmarshalling response: %v\n", err)
-			return
-		}
-	}()
+		return nil
+	}
+	defer resp.Body.Close()
 
-	fmt.Print("Enter hash mode (ex: 0 for MD5) or CTRL+C to cancel: ")
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error reading response: %v\n", err)
+		return nil
+	}
+	if err := json.Unmarshal(body, &response); err != nil {
+		fmt.Fprintf(os.Stderr, "Error unmarshalling response: %v\n", err)
+		return nil
+	}
+	if !response.Success {
+		fmt.Fprintln(os.Stderr, "API did not return success for jobs list.")
+		return nil
+	}
+
+	fmt.Fprint(os.Stderr, "Enter hash mode (ex: 0 for MD5) or CTRL+C to cancel: ")
 	var hashMode string
 	fmt.Scanln(&hashMode)
 	fmt.Fprintln(os.Stderr, "This may appear to hang on large left lists...")
 
-	for !response.Success {
-		time.Sleep(100 * time.Millisecond)
-	}
-
+	// count how many left lists match this mode
 	var totalLeftLists int
 	for _, item := range response.List {
 		if fmt.Sprintf("%d", item.AlgorithmID) == hashMode {
 			totalLeftLists++
 		}
+	}
+
+	if totalLeftLists == 0 {
+		fmt.Fprintf(os.Stderr, "No left lists found for hash mode %s.\n", hashMode)
+		return nil
 	}
 
 	var completedDownloads int
@@ -64,32 +77,42 @@ func downloadLeftList(apiKey string) error {
 	printProgressBar := func() {
 		progressMu.Lock()
 		defer progressMu.Unlock()
+
+		if totalLeftLists == 0 {
+			return
+		}
+
 		percentage := float64(completedDownloads) / float64(totalLeftLists) * 100
-		fmt.Fprintf(os.Stderr, "\rProgress: [")
+		fmt.Fprint(os.Stderr, "\rProgress: [")
 		for i := 0; i < int(percentage/5); i++ {
-			fmt.Print("=")
+			fmt.Fprint(os.Stderr, "=")
 		}
 		for i := int(percentage / 5); i < 20; i++ {
-			fmt.Print(" ")
+			fmt.Fprint(os.Stderr, " ")
 		}
 		fmt.Fprintf(os.Stderr, "] %.2f%% completed", percentage)
 	}
 
 	var downloadedHashes sync.Map
-
 	leftListChan := make(chan string, 100)
 
-	downloadLeftList := func() {
+	downloadLeftListWorker := func() {
 		for leftListURL := range leftListChan {
-			resp, err := http.Get("https://hashes.com" + leftListURL)
+			resp, err := httpClient.Get("https://hashes.com" + leftListURL)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "error downloading left list: %v\n", err)
+				var netErr net.Error
+				if errors.As(err, &netErr) && netErr.Timeout() {
+					fmt.Fprintf(os.Stderr, "\nRequest timed out for left list %s\n", leftListURL)
+				} else {
+					fmt.Fprintf(os.Stderr, "\nError downloading left list %s: %v\n", leftListURL, err)
+				}
 				continue
 			}
-			defer resp.Body.Close()
+
 			content, err := io.ReadAll(resp.Body)
+			resp.Body.Close()
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "error reading left list content: %v\n", err)
+				fmt.Fprintf(os.Stderr, "\nError reading left list content for %s: %v\n", leftListURL, err)
 				continue
 			}
 
@@ -109,7 +132,7 @@ func downloadLeftList(apiKey string) error {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			downloadLeftList()
+			downloadLeftListWorker()
 		}()
 	}
 
@@ -136,7 +159,7 @@ func downloadLeftList(apiKey string) error {
 		for _, hash := range strings.Split(hashes, "\n") {
 			if hash != "" && !uniqueHashes[hash] {
 				uniqueHashes[hash] = true
-				outFile.WriteString(hash + "\n")
+				_, _ = outFile.WriteString(hash + "\n")
 				totalUniqueHashes++
 			}
 		}

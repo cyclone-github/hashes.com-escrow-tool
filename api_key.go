@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
@@ -8,10 +9,10 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net"
-	"net/http"
 	"os"
 )
 
@@ -76,7 +77,12 @@ func decrypt(data []byte, passphrase string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	nonceSize := gcm.NonceSize()
+	if len(data) < nonceSize {
+		return nil, fmt.Errorf("ciphertext too short")
+	}
+
 	nonce, ciphertext := data[:nonceSize], data[nonceSize:]
 	plaintext, err := gcm.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
@@ -95,9 +101,17 @@ func getSHA256Hash(text string) []byte {
 func verifyAPIKey(apiKey string) bool {
 	url := fmt.Sprintf("https://hashes.com/en/api/balance?key=%s", apiKey)
 
-	resp, err := http.Get(url)
+	resp, err := httpClient.Get(url)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to send request: %v\n", err)
+		var netErr net.Error
+		switch {
+		case errors.Is(err, context.DeadlineExceeded):
+			fmt.Fprintln(os.Stderr, "Request timed out while verifying API key.")
+		case errors.As(err, &netErr) && netErr.Timeout():
+			fmt.Fprintln(os.Stderr, "Request timed out while verifying API key.")
+		default:
+			fmt.Fprintf(os.Stderr, "Failed to send request: %v\n", err)
+		}
 		return false
 	}
 	defer resp.Body.Close()
@@ -105,8 +119,7 @@ func verifyAPIKey(apiKey string) bool {
 	var response struct {
 		Success bool `json:"success"`
 	}
-	err = json.NewDecoder(resp.Body).Decode(&response)
-	if err != nil {
+	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to decode response: %v\n", err)
 		return false
 	}
@@ -116,6 +129,5 @@ func verifyAPIKey(apiKey string) bool {
 		return true
 	}
 
-	//fmt.Println("API key not verified, try again")
 	return false
 }

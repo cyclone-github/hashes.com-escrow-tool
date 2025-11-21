@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
-	"net/http"
+	"net"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -11,12 +13,20 @@ import (
 // convert crypto to usd via hashes.com API
 func toUSD(value float64, currency string) (map[string]interface{}, error) {
 	if currency == "credits" {
-		return map[string]interface{}{"currentprice": nil, "converted": "N/A"}, nil
+		return map[string]interface{}{
+			"currentprice": nil,
+			"converted":    "N/A",
+		}, nil
 	}
 
 	url := "https://hashes.com/en/api/conversion"
-	resp, err := http.Get(url)
+	resp, err := httpClient.Get(url)
 	if err != nil {
+		var netErr net.Error
+		if errors.As(err, &netErr) && netErr.Timeout() {
+			fmt.Fprintln(os.Stderr, "Request timed out while fetching USD conversion rates.")
+			return nil, nil // non-fatal, caller handles missing data
+		}
 		return nil, fmt.Errorf("failed to send request: %v", err)
 	}
 	defer resp.Body.Close()
@@ -54,5 +64,8 @@ func toUSD(value float64, currency string) (map[string]interface{}, error) {
 
 	converted := fmt.Sprintf("$%.3f", value*currentPriceFloat)
 
-	return map[string]interface{}{"currentprice": currentPrice, "converted": converted}, nil
+	return map[string]interface{}{
+		"currentprice": currentPrice,
+		"converted":    converted,
+	}, nil
 }
