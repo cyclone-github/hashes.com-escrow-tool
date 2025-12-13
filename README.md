@@ -1,4 +1,4 @@
-[![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=cyclone-github&repo=hashes.com-escrow-tool&theme=gruvbox)](https://github.com/cyclone-github/hashes.com-escrow-tool/)
+[![Readme Card](https://github-readme-stats-fast.vercel.app/api/pin/?username=cyclone-github&repo=hashes.com-escrow-tool&theme=gruvbox)](https://github.com/cyclone-github/hashes.com-escrow-tool/)
 
 <!-- [![Go Report Card](https://goreportcard.com/badge/github.com/cyclone-github/hashes.com-escrow-tool)](https://goreportcard.com/report/github.com/cyclone-github/hashes.com-escrow-tool) -->
 [![GitHub issues](https://img.shields.io/github/issues/cyclone-github/hashes.com-escrow-tool.svg)](https://github.com/cyclone-github/hashes.com-escrow-tool/issues)
@@ -69,6 +69,7 @@ go install github.com/cyclone-github/hashes.com-escrow-tool@latest
 ```
 go install github.com/cyclone-github/hashes.com-escrow-tool@main
 ```
+
 ### Compile from source:
 - If you want the latest features, compiling from source is the best option since the release version may run several revisions behind the source code.
 - This assumes you have Go and Git installed
