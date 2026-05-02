@@ -45,6 +45,9 @@ v1.1.1; 2025-07-15.0950
 v1.1.2; 2025-11-21
 	fixed redundant new line logic
 	added http timeouts
+v1.1.3; 2026-05-02
+	fixed https://github.com/cyclone-github/hashes.com-escrow-tool/issues/7
+	enforce search API limits (250)
 */
 
 // main function
@@ -61,7 +64,7 @@ func main() {
 		return
 	}
 	if *versionFlag {
-		version := "Cyclone's Hashes.com API Escrow Tool v1.1.2; 2025-11-21"
+		version := "Cyclone's Hashes.com API Escrow Tool v1.1.3; 2026-05-02"
 		fmt.Fprintln(os.Stderr, version)
 		return
 	}
@@ -79,7 +82,7 @@ func main() {
 	clearScreen()
 	printCyclone()
 	fmt.Fprintln(os.Stderr, " ######################################################################")
-	fmt.Fprintln(os.Stderr, "#              Cyclone's Hashes.com API Escrow Tool v1.1.2             #")
+	fmt.Fprintln(os.Stderr, "#              Cyclone's Hashes.com API Escrow Tool v1.1.3             #")
 	fmt.Fprintln(os.Stderr, "#           github.com/cyclone-github/hashes.com-escrow-tool           #")
 	fmt.Fprintln(os.Stderr, "#            This tool requires an API key from hashes.com             #")
 	fmt.Fprintln(os.Stderr, "#                   'Search Hashes' requires credits                   #")
@@ -130,10 +133,17 @@ func main() {
 		case "4":
 			// Search Hashes
 			clearScreen()
-			hashPlaintext := pasteHashes("Search Hashes.com")
-			hashes := strings.Split(hashPlaintext, "\n")
-			if err := searchHashes(apiKey, hashes); err != nil {
-				fmt.Fprintf(os.Stderr, "An error occurred: %v\n", err)
+			for {
+				hashPlaintext := pasteHashes("Search Hashes.com")
+				hashes := strings.Split(hashPlaintext, "\n")
+				if len(hashes) > maxSearchHashes {
+					fmt.Fprintf(os.Stderr, "Hashes.com search supports up to %d hashes per request. You entered %d. Please retry with %d or fewer hashes.\n", maxSearchHashes, len(hashes), maxSearchHashes)
+					continue
+				}
+				if err := searchHashes(apiKey, hashes); err != nil {
+					fmt.Fprintf(os.Stderr, "An error occurred: %v\n", err)
+				}
+				break
 			}
 		case "5":
 			// Hash Identifier

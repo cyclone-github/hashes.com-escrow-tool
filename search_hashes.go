@@ -13,8 +13,15 @@ import (
 	"text/tabwriter"
 )
 
+const maxSearchHashes = 250
+
 // search hashes
 func searchHashes(apiKey string, hashes []string) error {
+	if len(hashes) > maxSearchHashes {
+		fmt.Fprintf(os.Stderr, "Hashes.com search supports up to %d hashes per request. Please retry with %d or fewer hashes.\n", maxSearchHashes, maxSearchHashes)
+		return nil
+	}
+
 	var requestBody bytes.Buffer
 	writer := multipart.NewWriter(&requestBody)
 

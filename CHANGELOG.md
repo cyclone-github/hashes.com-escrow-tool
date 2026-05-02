@@ -1,3 +1,8 @@
+### v1.1.3; 2026-05-02
+```
+fixed https://github.com/cyclone-github/hashes.com-escrow-tool/issues/7
+enforce search API limits (250)
+```
 ### v1.1.2; 2025-11-21
 ```
 fixed redundant new line logic
