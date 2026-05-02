@@ -8,7 +8,7 @@
 # Hashes.com API Escrow Tool
 ```
  ######################################################################
-#              Cyclone's Hashes.com API Escrow Tool v1.1.2             #
+#              Cyclone's Hashes.com API Escrow Tool v1.1.3             #
 #           github.com/cyclone-github/hashes.com-escrow-tool           #
 #            This tool requires an API key from hashes.com             #
 #                   'Search Hashes' requires credits                   #
