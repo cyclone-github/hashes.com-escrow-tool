@@ -60,7 +60,7 @@ func uploadFounds(apiKey string) error {
 		return fmt.Errorf("An error occurred: failed to close writer: %v", err)
 	}
 
-	url := "https://hashes.com/en/api/founds"
+	url := hashesAPIBaseURL + "/founds"
 	req, err := http.NewRequest(http.MethodPost, url, &requestBody)
 	if err != nil {
 		return fmt.Errorf("An error occurred: failed to create request: %v", err)

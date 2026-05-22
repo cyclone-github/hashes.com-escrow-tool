@@ -11,7 +11,7 @@ import (
 
 // get found history
 func getFoundHistory(apiKey string) error {
-	url := fmt.Sprintf("https://hashes.com/en/api/uploads?key=%s", apiKey)
+	url := fmt.Sprintf("%s/uploads?key=%s", hashesAPIBaseURL, apiKey)
 
 	resp, err := httpClient.Get(url)
 	if err != nil {
@@ -50,7 +50,7 @@ func getFoundHistory(apiKey string) error {
 	xmrRate, _ := toUSD(1, "XMR")
 	ltcRate, _ := toUSD(1, "LTC")
 
-	startIndex := len(response.List) - 20
+	startIndex := len(response.List) - maxHistoryEntries
 	if startIndex < 0 {
 		startIndex = 0
 	}
@@ -62,9 +62,9 @@ func getFoundHistory(apiKey string) error {
 		xmr := parseFloat(h.XMR)
 		ltc := parseFloat(h.LTC)
 
-		btcUSD := fmt.Sprintf("$%.3f", btc*parseFloat(btcRate["currentprice"].(string)))
-		xmrUSD := fmt.Sprintf("$%.3f", xmr*parseFloat(xmrRate["currentprice"].(string)))
-		ltcUSD := fmt.Sprintf("$%.3f", ltc*parseFloat(ltcRate["currentprice"].(string)))
+		btcUSD := fmt.Sprintf("$%.3f", btc*currentPriceFromRate(btcRate))
+		xmrUSD := fmt.Sprintf("$%.3f", xmr*currentPriceFromRate(xmrRate))
+		ltcUSD := fmt.Sprintf("$%.3f", ltc*currentPriceFromRate(ltcRate))
 
 		fmt.Fprintf(
 			writer,

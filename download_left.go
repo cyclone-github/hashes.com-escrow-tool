@@ -26,7 +26,7 @@ func downloadLeftList(apiKey string) error {
 	}
 
 	// fetch jobs list (with timeout via global httpClient)
-	url := "https://hashes.com/en/api/jobs?key=" + apiKey
+	url := hashesAPIBaseURL + "/jobs?key=" + apiKey
 	resp, err := httpClient.Get(url)
 	if err != nil {
 		var netErr net.Error
@@ -94,11 +94,11 @@ func downloadLeftList(apiKey string) error {
 	}
 
 	var downloadedHashes sync.Map
-	leftListChan := make(chan string, 100)
+	leftListChan := make(chan string, leftListChannelBuffer)
 
 	downloadLeftListWorker := func() {
 		for leftListURL := range leftListChan {
-			resp, err := httpClient.Get("https://hashes.com" + leftListURL)
+			content, err := fetchDownloadURL(hashesBaseURL + leftListURL)
 			if err != nil {
 				var netErr net.Error
 				if errors.As(err, &netErr) && netErr.Timeout() {
@@ -106,13 +106,6 @@ func downloadLeftList(apiKey string) error {
 				} else {
 					fmt.Fprintf(os.Stderr, "\nError downloading left list %s: %v\n", leftListURL, err)
 				}
-				continue
-			}
-
-			content, err := io.ReadAll(resp.Body)
-			resp.Body.Close()
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "\nError reading left list content for %s: %v\n", leftListURL, err)
 				continue
 			}
 
@@ -128,7 +121,7 @@ func downloadLeftList(apiKey string) error {
 	printProgressBar()
 
 	var wg sync.WaitGroup
-	for i := 0; i < 10; i++ {
+	for i := 0; i < downloadWorkerCount; i++ {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()

@@ -99,7 +99,7 @@ func getSHA256Hash(text string) []byte {
 
 // verify hashes.com API key
 func verifyAPIKey(apiKey string) bool {
-	url := fmt.Sprintf("https://hashes.com/en/api/balance?key=%s", apiKey)
+	url := fmt.Sprintf("%s/balance?key=%s", hashesAPIBaseURL, apiKey)
 
 	resp, err := httpClient.Get(url)
 	if err != nil {

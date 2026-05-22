@@ -11,7 +11,7 @@ import (
 
 // hash identifier
 func hashIdentifier(hash string, extended bool) error {
-	url := "https://hashes.com/en/api/identifier?hash=" + hash
+	url := fmt.Sprintf("%s/identifier?hash=%s", hashesAPIBaseURL, hash)
 	if extended {
 		url += "&extended=true"
 	}

@@ -15,7 +15,7 @@ func getWalletBalances(apiKey string) error {
 	fmt.Fprintln(os.Stderr, "Wallet Balance:")
 	fmt.Fprintln(os.Stderr)
 
-	url := fmt.Sprintf("https://hashes.com/en/api/balance?key=%s", apiKey)
+	url := fmt.Sprintf("%s/balance?key=%s", hashesAPIBaseURL, apiKey)
 
 	resp, err := httpClient.Get(url)
 	if err != nil {

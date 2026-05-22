@@ -6,9 +6,19 @@
 [![GitHub release](https://img.shields.io/github/release/cyclone-github/hashes.com-escrow-tool.svg)](https://github.com/cyclone-github/hashes.com-escrow-tool/releases)
 
 # Hashes.com API Escrow Tool
+
+### Install latest release:
+```
+go install github.com/cyclone-github/hashes.com-escrow-tool@latest
+```
+### Install from latest source code (bleeding edge):
+```
+go install github.com/cyclone-github/hashes.com-escrow-tool@main
+```
+
 ```
  ######################################################################
-#              Cyclone's Hashes.com API Escrow Tool v1.1.3             #
+#              Cyclone's Hashes.com API Escrow Tool v1.1.4             #
 #           github.com/cyclone-github/hashes.com-escrow-tool           #
 #            This tool requires an API key from hashes.com             #
 #                   'Search Hashes' requires credits                   #
@@ -55,20 +65,11 @@ https://github.com/PlumLulz/hashes.com-cli
 
 ### Usage:
 - Run tool normally
-  - `escrow_tool`
+  - `hashes.com-escrow-tool`
 - Start tool in websocket escrow monitor mode (can be used to monitor escrow and/or pipe escrow job json into external program)
-  - `escrow_tool -websocket`
-  - `escrow_tool -websocket | jq`
-  - `escrow_tool -websocket | escrow_cracking_bot`
-
-### Install latest release:
-```
-go install github.com/cyclone-github/hashes.com-escrow-tool@latest
-```
-### Install from latest source code (bleeding edge):
-```
-go install github.com/cyclone-github/hashes.com-escrow-tool@main
-```
+  - `hashes.com-escrow-tool -websocket`
+  - `hashes.com-escrow-tool -websocket | jq`
+  - `hashes.com-escrow-tool -websocket | escrow_cracking_bot`
 
 ### Compile from source:
 - If you want the latest features, compiling from source is the best option since the release version may run several revisions behind the source code.
