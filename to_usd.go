@@ -10,17 +10,14 @@ import (
 	"strings"
 )
 
-// convert crypto to usd via hashes.com API
-func toUSD(value float64, currency string) (map[string]interface{}, error) {
-	if currency == "credits" {
-		return map[string]interface{}{
-			"currentprice": nil,
-			"converted":    "N/A",
-		}, nil
-	}
+type conversionRates struct {
+	BTC string
+	XMR string
+	LTC string
+}
 
-	url := "https://hashes.com/en/api/conversion"
-	resp, err := httpClient.Get(url)
+func fetchConversionRates() (*conversionRates, error) {
+	resp, err := httpClient.Get(hashesAPIBaseURL + "/conversion")
 	if err != nil {
 		var netErr net.Error
 		if errors.As(err, &netErr) && netErr.Timeout() {
@@ -45,21 +42,81 @@ func toUSD(value float64, currency string) (map[string]interface{}, error) {
 		return nil, fmt.Errorf("API returned success=false")
 	}
 
+	return &conversionRates{
+		BTC: response.BTC,
+		XMR: response.XMR,
+		LTC: response.LTC,
+	}, nil
+}
+
+func conversionPrice(rates *conversionRates, currency string) (float64, error) {
+	if rates == nil {
+		return 0, nil
+	}
+
 	var currentPrice string
 	switch strings.ToUpper(currency) {
 	case "BTC":
-		currentPrice = response.BTC
+		currentPrice = rates.BTC
 	case "XMR":
-		currentPrice = response.XMR
+		currentPrice = rates.XMR
 	case "LTC":
-		currentPrice = response.LTC
+		currentPrice = rates.LTC
 	default:
-		return nil, fmt.Errorf("unsupported currency: %s", currency)
+		return 0, fmt.Errorf("unsupported currency: %s", currency)
 	}
 
-	currentPriceFloat, err := strconv.ParseFloat(currentPrice, 64)
+	return strconv.ParseFloat(currentPrice, 64)
+}
+
+func currentPriceFromRate(rate map[string]interface{}) float64 {
+	if rate == nil {
+		return 0
+	}
+
+	priceVal, ok := rate["currentprice"]
+	if !ok || priceVal == nil {
+		return 0
+	}
+
+	priceStr, ok := priceVal.(string)
+	if !ok {
+		return 0
+	}
+
+	return parseFloat(priceStr)
+}
+
+// convert crypto to usd via hashes.com API
+func toUSD(value float64, currency string) (map[string]interface{}, error) {
+	if currency == "credits" {
+		return map[string]interface{}{
+			"currentprice": nil,
+			"converted":    "N/A",
+		}, nil
+	}
+
+	rates, err := fetchConversionRates()
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse current price: %v", err)
+		return nil, err
+	}
+	if rates == nil {
+		return nil, nil
+	}
+
+	currentPriceFloat, err := conversionPrice(rates, currency)
+	if err != nil {
+		return nil, err
+	}
+
+	currentPrice := ""
+	switch strings.ToUpper(currency) {
+	case "BTC":
+		currentPrice = rates.BTC
+	case "XMR":
+		currentPrice = rates.XMR
+	case "LTC":
+		currentPrice = rates.LTC
 	}
 
 	converted := fmt.Sprintf("$%.3f", value*currentPriceFloat)

@@ -28,7 +28,7 @@ func connect(apiKey string) (*websocket.Conn, error) {
 
 	dialer := *websocket.DefaultDialer
 	dialer.NetDialContext = netDialer.DialContext
-	dialer.HandshakeTimeout = 10 * time.Second
+	dialer.HandshakeTimeout = httpResponseTimeout
 
 	c, _, err := dialer.Dial(u.String(), nil)
 	if err != nil {

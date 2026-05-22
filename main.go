@@ -18,36 +18,12 @@ This tool requires an API key from hashes.com
 'Search Hashes' requires credits
 See hashes.com for more info
 
-version history
-v0.1.0; 2023-08-18.1630
-	initial release
-v0.1.1; 2023-08-19.1945
-	added withdrawal history
-v0.1.1; 2023-08-20.1630
-	modified withdrawal history output with tabwriter
-v0.1.2; 2023-08-24.1540
-	added download left lists
-v0.1.3; 2024-01-14.1600
-	cleaned/updated code
-	changed last nth history from 10 to 20
-	updated API key encryption logic
-v1.0.0; 2024-04-14.1500
-	fixed download deduplication
-	release v1.0.0
-v1.0.1; 2025-07-12.2145
-	maintenance release
-v1.1.0; 2025-07-14.0900
-	replace Kraken crypto to USD conversion with https://hashes.com/en/api/conversion
-v1.1.1; 2025-07-15.0950
-	updated print statements to use stdout / stderr where applicable
-	beta: added escrow websocket monitor (option #9)
-	beta: added -websocket flag to start tool in escrow websocket monitor mode
-v1.1.2; 2025-11-21
-	fixed redundant new line logic
-	added http timeouts
-v1.1.3; 2026-05-02
-	fixed https://github.com/cyclone-github/hashes.com-escrow-tool/issues/7
-	enforce search API limits (250)
+latest version history
+v1.1.4; 2026-05-22
+	address download left list timeouts; https://github.com/cyclone-github/hashes.com-escrow-tool/issues/9
+	centralized shared constants in globals.go
+	cached conversion rate lookup in show profit
+	fixed upload history conversion panic on rate timeout
 */
 
 // main function
@@ -64,7 +40,7 @@ func main() {
 		return
 	}
 	if *versionFlag {
-		version := "Cyclone's Hashes.com API Escrow Tool v1.1.3; 2026-05-02"
+		version := "Cyclone's Hashes.com API Escrow Tool v1.1.4; 2026-05-22"
 		fmt.Fprintln(os.Stderr, version)
 		return
 	}
@@ -82,7 +58,7 @@ func main() {
 	clearScreen()
 	printCyclone()
 	fmt.Fprintln(os.Stderr, " ######################################################################")
-	fmt.Fprintln(os.Stderr, "#              Cyclone's Hashes.com API Escrow Tool v1.1.3             #")
+	fmt.Fprintln(os.Stderr, "#              Cyclone's Hashes.com API Escrow Tool v1.1.4             #")
 	fmt.Fprintln(os.Stderr, "#           github.com/cyclone-github/hashes.com-escrow-tool           #")
 	fmt.Fprintln(os.Stderr, "#            This tool requires an API key from hashes.com             #")
 	fmt.Fprintln(os.Stderr, "#                   'Search Hashes' requires credits                   #")

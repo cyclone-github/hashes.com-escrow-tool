@@ -15,7 +15,7 @@ func withdrawalHistory(apiKey string) error {
 	fmt.Fprintln(os.Stderr, "Withdrawal History (last 20):")
 	fmt.Fprintln(os.Stderr)
 
-	url := "https://hashes.com/en/api/withdrawals?key=" + apiKey
+	url := hashesAPIBaseURL + "/withdrawals?key=" + apiKey
 	resp, err := httpClient.Get(url)
 	if err != nil {
 		var netErr net.Error
@@ -48,7 +48,7 @@ func withdrawalHistory(apiKey string) error {
 		return fmt.Errorf("An error occurred: request was not successful")
 	}
 
-	end := 20
+	end := maxHistoryEntries
 	if end > len(response.List) {
 		end = len(response.List)
 	}

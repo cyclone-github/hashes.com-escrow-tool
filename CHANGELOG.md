@@ -1,3 +1,10 @@
+### v1.1.4; 2026-05-22
+```
+address download left list timeouts; https://github.com/cyclone-github/hashes.com-escrow-tool/issues/9
+centralized shared constants in globals.go
+cached conversion rate lookup in show profit
+fixed upload history conversion panic on rate timeout
+```
 ### v1.1.3; 2026-05-02
 ```
 fixed https://github.com/cyclone-github/hashes.com-escrow-tool/issues/7

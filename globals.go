@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net"
 	"net/http"
 	"time"
@@ -30,17 +31,45 @@ type WalletBalances struct {
 const (
 	apiKeyFile          = "api_key.enc"
 	base64StaticSeedKey = "NWl5cTk3RlEwZy9HODFBQTU3NF5lZU0lel0zSwo="
+
+	toolName        = "Cyclone's Hashes.com API Escrow Tool"
+	toolVersion     = "v1.1.4"
+	toolVersionDate = "2026-05-22"
+
+	hashesBaseURL    = "https://hashes.com"
+	hashesAPIBaseURL = hashesBaseURL + "/en/api"
+
+	maxHistoryEntries     = 20
+	maxSearchHashes       = 250
+	downloadWorkerCount   = 10
+	leftListChannelBuffer = 100
+
+	httpResponseTimeout = 10 * time.Second
+	downloadBodyTimeout = 120 * time.Second
+	dialKeepAlive       = 30 * time.Second
 )
 
 var (
 	encryptionKey string
 
 	httpClient = &http.Client{
-		Timeout: 10 * time.Second,
+		Timeout: httpResponseTimeout,
+	}
+
+	downloadHTTPClient = &http.Client{
+		Transport: &http.Transport{
+			DialContext:           netDialer.DialContext,
+			TLSHandshakeTimeout:   httpResponseTimeout,
+			ResponseHeaderTimeout: httpResponseTimeout,
+		},
 	}
 
 	netDialer = &net.Dialer{
-		Timeout:   10 * time.Second,
-		KeepAlive: 30 * time.Second,
+		Timeout:   httpResponseTimeout,
+		KeepAlive: dialKeepAlive,
 	}
 )
+
+func formatToolVersion() string {
+	return fmt.Sprintf("%s %s; %s", toolName, toolVersion, toolVersionDate)
+}

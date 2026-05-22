@@ -13,8 +13,6 @@ import (
 	"text/tabwriter"
 )
 
-const maxSearchHashes = 250
-
 // search hashes
 func searchHashes(apiKey string, hashes []string) error {
 	if len(hashes) > maxSearchHashes {
@@ -32,7 +30,7 @@ func searchHashes(apiKey string, hashes []string) error {
 	}
 	writer.Close()
 
-	req, err := http.NewRequest("POST", "https://hashes.com/en/api/search", &requestBody)
+	req, err := http.NewRequest("POST", hashesAPIBaseURL+"/search", &requestBody)
 	if err != nil {
 		return err
 	}

@@ -15,7 +15,7 @@ func getProfit(apiKey string) error {
 	fmt.Fprintln(os.Stderr, "Total Profit:")
 	fmt.Fprintln(os.Stderr)
 
-	url := fmt.Sprintf("https://hashes.com/en/api/profit?key=%s", apiKey)
+	url := fmt.Sprintf("%s/profit?key=%s", hashesAPIBaseURL, apiKey)
 
 	resp, err := httpClient.Get(url)
 	if err != nil {
@@ -41,13 +41,24 @@ func getProfit(apiKey string) error {
 		return fmt.Errorf("request was not successful")
 	}
 
+	rates, err := fetchConversionRates()
+	if err != nil {
+		return err
+	}
+
 	usd := make(map[string]string)
 	for currency, value := range response.Currency {
 		if valueFloat, err := strconv.ParseFloat(value, 64); err == nil {
-			usdValue, _ := toUSD(valueFloat, currency)
-			if usdValueConverted, ok := usdValue["converted"]; ok {
-				usd[currency] = fmt.Sprintf("%v", usdValueConverted)
+			if rates == nil {
+				continue
 			}
+
+			currentPriceFloat, err := conversionPrice(rates, currency)
+			if err != nil {
+				continue
+			}
+
+			usd[currency] = fmt.Sprintf("$%.3f", valueFloat*currentPriceFloat)
 		}
 	}
 
